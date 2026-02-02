@@ -201,11 +201,12 @@ fun MainScreen(
 
             Button(onClick = {
 
-                val gpa = calculateGPA2()
+                val gpa = calculateGPA2(allCourses)
                 // Display the calculated GPA - Implement the display logic as needed
 //                    Toast.makeText(this, "GPA: $gpa", Toast.LENGTH_LONG).show()
                 println("GPA is: $gpa")
-                calculatedGPA = (-4.0) * Random.nextFloat()
+                calculatedGPA = gpa
+
 
             }) {
                 Text("GPA")
@@ -214,7 +215,7 @@ fun MainScreen(
 
         Row {
             Spacer(modifier = Modifier.weight(1f))
-            Text("GPA: $calculatedGPA")
+            Text("GPA: %.2f".format(calculatedGPA))
 
         }
         LazyColumn(
@@ -238,17 +239,14 @@ fun MainScreen(
 }
 
 // GPA calculation functionality
-private fun calculateGPA2(): Double {
-    // Dummy data for illustration. Replace with actual data retrieval and calculation logic
-    val courses = listOf(
-        Triple("Course1", 3, "A"), // CourseName, CreditHour, LetterGrade
-        Triple("Course2", 4, "B"),
-        Triple("Course3", 2, "A")
-    )
+private fun calculateGPA2(courses: List<Course>): Double {
 
     val gradePoints = mapOf("A" to 4.0, "B" to 3.0, "C" to 2.0, "D" to 1.0, "F" to 0.0)
-    val totalCreditHours = courses.sumOf { it.second }
-    val totalPoints = courses.sumOf { it.second * (gradePoints[it.third] ?: 0.0) }
+    val totalCreditHours = courses.sumOf { it.creditHour }
+    if (totalCreditHours == 0) return 0.0
+    val totalPoints = courses.sumOf {
+        it.creditHour * (gradePoints[it.letterGrade.uppercase()] ?: 0.0)
+    }
 
     return if (totalCreditHours > 0) totalPoints / totalCreditHours else 0.0
 }
