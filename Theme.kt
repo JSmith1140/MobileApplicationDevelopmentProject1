@@ -1,42 +1,52 @@
+// ===============================
+// File: app/src/main/java/com/maxli/coursegpa/ui/theme/Theme.kt
+// ===============================
 package com.maxli.coursegpa.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
+    // Dark mode: navy base + orange accents + light blue highlights
     primary = RWNavy,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    onPrimary = Color.White,
+
+    secondary = RWLightBlue,
+    onSecondary = RWNavy,
+
+    tertiary = RWOrange,
+    onTertiary = RWNavy,
+
+    background = Color(0xFF0B1220),
+    onBackground = Color.White,
+    surface = Color(0xFF0F1A30),
+    onSurface = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
+    // Light mode: light blue base, navy structure, orange accents
     primary = RWLightBlue,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    onPrimary = RWNavy,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
+    secondary = RWNavy,
     onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+
+    tertiary = RWOrange,
+    onTertiary = RWNavy,
+
+    background = RWLightBlue,
+    onBackground = RWNavy,
+    surface = Color.White,
+    onSurface = RWNavy
 )
 
 @Composable
 fun CourseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -45,7 +55,6 @@ fun CourseTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
