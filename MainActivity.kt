@@ -28,8 +28,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import kotlin.random.Random
 
 import com.maxli.coursegpa.ui.theme.CourseTheme
@@ -125,12 +128,24 @@ fun MainScreen(
         letterGrade = text
     }
 
+    @Composable
+    fun HeaderImage() {
+        Image(
+            painter = painterResource(id = R.drawable.rwu_logo),
+            contentDescription = "Header Image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            contentScale = ContentScale.Crop
+        )
+    }
 
     Column(
         horizontalAlignment = CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
     ) {
+        HeaderImage()
         CustomTextField(
             title = "Course Name",
             textState = courseName,
