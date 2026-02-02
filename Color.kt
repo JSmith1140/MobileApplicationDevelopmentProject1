@@ -1,3 +1,6 @@
+// ===============================
+// File: app/src/main/java/com/maxli/coursegpa/ui/theme/Color.kt
+// ===============================
 package com.maxli.coursegpa.ui.theme
 
 import androidx.compose.ui.graphics.Color
@@ -10,6 +13,7 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
+// Your brand palette
 val RWLightBlue = Color(0xFF9BC9EA)
 val RWNavy = Color(0xFF01295F)
 val RWOrange = Color(0xFFFEB71C)
