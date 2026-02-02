@@ -11,7 +11,5 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val RWLightBlue = Color(0xFF9BC9EA)
-
 val RWNavy = Color(0xFF01295F)
-
 val RWOrange = Color(0xFFFEB71C)
