@@ -192,6 +192,7 @@ fun MainScreen(
                 searching = false
                 courseName = ""
                 courseCreditHour = ""
+                letterGrade = ""
             }// ,
 //                modifier = Modifier.size(width = 80.dp, height = 50.dp)
 
