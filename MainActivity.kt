@@ -1,40 +1,35 @@
+// ===============================
+// File: app/src/main/java/com/maxli/coursegpa/MainActivity.kt
+// ===============================
 package com.maxli.coursegpa
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import kotlin.random.Random
-
 import com.maxli.coursegpa.ui.theme.CourseTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,20 +37,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CourseTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val owner = LocalViewModelStoreOwner.current
-
                     owner?.let {
                         val viewModel: MainViewModel = viewModel(
                             it,
                             "MainViewModel",
                             MainViewModelFactory(
-                                LocalContext.current.applicationContext
-                                        as Application)
+                                LocalContext.current.applicationContext as Application
+                            )
                         )
                         ScreenSetup(viewModel)
                     }
@@ -63,26 +56,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    // Adding the button to your layout - Adapt this to your layout configuration
-    // For example, if you have a LinearLayout, you can add the button to it
-    // val layout: LinearLayout = findViewById(R.id.your_layout_id)
-    // layout.addView(gpaButton)
-    // GPA calculation function
-//        private fun calculateGPA(): Double {
-//            // Retrieve courses data from database - Replace with actual data retrieval
-//            val courses = listOf(
-//                Triple("Course1", 3, "A"), // Example data: CourseName, CreditHour, LetterGrade
-//                Triple("Course2", 4, "B"),
-//                Triple("Course3", 2, "C")
-//            )
-//            val gradePoints = mapOf("A" to 4.0, "B" to 3.0, "C" to 2.0, "D" to 1.0, "F" to 0.0)
-//            val totalCreditHours = courses.sumOf { it.second }
-//            val totalPoints = courses.sumOf { it.second * (gradePoints[it.third] ?: 0.0) }
-//
-//            return if (totalCreditHours > 0) totalPoints / totalCreditHours else 0.0
-//        }
-
 }
 
 @Composable
@@ -95,7 +68,6 @@ fun ScreenSetup(viewModel: MainViewModel) {
         searchResults = searchResults,
         viewModel = viewModel
     )
-
 }
 
 @Composable
@@ -106,200 +78,292 @@ fun MainScreen(
 ) {
     var courseName by remember { mutableStateOf("") }
     var courseCreditHour by remember { mutableStateOf("") }
-    var letterGrade by remember {
-        mutableStateOf("")
-    }
+    var letterGrade by remember { mutableStateOf("") }
 
-    var calculatedGPA by remember {
-        mutableDoubleStateOf(-1.0)
-    }
-
+    var calculatedGPA by remember { mutableDoubleStateOf(-1.0) }
     var searching by remember { mutableStateOf(false) }
 
-    val onCourseTextChange = { text : String ->
-        courseName = text
-    }
-
-    val onCreditHourTextChange = { text : String ->
-        courseCreditHour = text
-    }
-
-    val onLetterGradeTextChange = { text : String ->
-        letterGrade = text
-    }
-
-    @Composable
-    fun HeaderImage() {
-        Image(
-            painter = painterResource(id = R.drawable.rwu_logo),
-            contentDescription = "Header Image",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            contentScale = ContentScale.Crop
-        )
-    }
+    val navyButtonColors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.secondary,   // navy
+        contentColor = MaterialTheme.colorScheme.onSecondary
+    )
+    val lightBlueButtonColors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,     // light blue
+        contentColor = MaterialTheme.colorScheme.onPrimary
+    )
+    val orangeButtonColors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.tertiary,    // orange
+        contentColor = MaterialTheme.colorScheme.onTertiary
+    )
 
     Column(
         horizontalAlignment = CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = 8.dp)
     ) {
-        HeaderImage()
+        // ===== Header with logo + gradient-ish accent (navy bar + orange divider) =====
+        HeaderSection()
+
+        // ===== Inputs =====
         CustomTextField(
             title = "Course Name",
             textState = courseName,
-            onTextChange = onCourseTextChange,
+            onTextChange = { courseName = it },
             keyboardType = KeyboardType.Text
         )
 
         CustomTextField(
             title = "Credit Hour",
             textState = courseCreditHour,
-            onTextChange = onCreditHourTextChange,
+            onTextChange = { courseCreditHour = it },
             keyboardType = KeyboardType.Number
         )
 
         CustomTextField(
             title = "Letter Grade",
             textState = letterGrade,
-            onTextChange = onLetterGradeTextChange,
+            onTextChange = { letterGrade = it },
             keyboardType = KeyboardType.Text
         )
 
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
+        // ===== Buttons =====
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(horizontal = 10.dp, vertical = 6.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            Button(onClick = {
-                if (courseCreditHour.isNotEmpty()) {
-                    viewModel.insertCourse(
-                        Course(
-                            courseName,
-                            courseCreditHour.toInt(),
-                            letterGrade
-                        )
-                    )
-                    searching = false
-                }
-            }) {
-                Text("Add")
-            }
-
-            Button(onClick = {
-                searching = true
-                viewModel.findCourse(courseName)
-            }) {
-                Text("Sch")
-            }
-
-            Button(onClick = {
-                searching = false
-                viewModel.deleteCourse(courseName)
-            }) {
-                Text("Del")
-            }
-
-            Button(onClick = {
-                searching = false
-                courseName = ""
-                courseCreditHour = ""
-                letterGrade = ""
-            }// ,
-//                modifier = Modifier.size(width = 80.dp, height = 50.dp)
-
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
             ) {
-                Text("Clr")
-            }
+                Button(
+                    onClick = {
+                        if (courseCreditHour.isNotEmpty()) {
+                            viewModel.insertCourse(
+                                Course(
+                                    courseName,
+                                    courseCreditHour.toInt(),
+                                    letterGrade
+                                )
+                            )
+                            searching = false
+                        }
+                    },
+                    colors = navyButtonColors
+                ) { Text("Add") }
 
-            Button(onClick = {
+                Button(
+                    onClick = {
+                        searching = true
+                        viewModel.findCourse(courseName)
+                    },
+                    colors = lightBlueButtonColors
+                ) { Text("Sch") }
 
-                val gpa = calculateGPA2(allCourses)
-                // Display the calculated GPA - Implement the display logic as needed
-//                    Toast.makeText(this, "GPA: $gpa", Toast.LENGTH_LONG).show()
-                println("GPA is: $gpa")
-                calculatedGPA = gpa
+                Button(
+                    onClick = {
+                        searching = false
+                        viewModel.deleteCourse(courseName)
+                    },
+                    colors = navyButtonColors
+                ) { Text("Del") }
 
+                Button(
+                    onClick = {
+                        searching = false
+                        courseName = ""
+                        courseCreditHour = ""
+                        letterGrade = ""
+                    },
+                    colors = navyButtonColors
+                ) { Text("Clr") }
 
-            }) {
-                Text("GPA")
+                // Accent button
+                Button(
+                    onClick = {
+                        calculatedGPA = calculateGPA2(allCourses)
+                    },
+                    colors = orangeButtonColors
+                ) { Text("GPA") }
             }
         }
 
-        Row {
-            Spacer(modifier = Modifier.weight(1f))
-            Text("GPA: %.2f".format(calculatedGPA))
-
+        // ===== GPA display =====
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 4.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Current GPA",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = if (calculatedGPA < 0) "--" else "%.2f".format(calculatedGPA),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.tertiary // orange highlight
+                )
+            }
         }
+
+        // ===== Course list =====
         LazyColumn(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
             val list = if (searching) searchResults else allCourses
 
             item {
-                TitleRow(head1 = "ID", head2 = "Course", head3 = "CreditHour", head4 = "LetterGrade")
+                TitleRow(
+                    head1 = "ID",
+                    head2 = "Course",
+                    head3 = "Credit",
+                    head4 = "Grade"
+                )
             }
 
             items(list) { course ->
-                CourseRow(id = course.id, name = course.courseName,
+                CourseRow(
+                    id = course.id,
+                    name = course.courseName,
                     creditHour = course.creditHour,
-                    letterGrade = course.letterGrade)
+                    letterGrade = course.letterGrade
+                )
             }
         }
     }
 }
 
+@Composable
+private fun HeaderSection() {
+    // Logo image
+    Image(
+        painter = painterResource(id = R.drawable.rwu_logo),
+        contentDescription = "Header Image",
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp),
+        contentScale = ContentScale.Crop
+    )
+
+    // Navy bar with title + orange accent divider
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.secondary)
+            .padding(horizontal = 14.dp, vertical = 10.dp)
+    ) {
+        Text(
+            text = "Course GPA Tracker",
+            color = MaterialTheme.colorScheme.onSecondary,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "Add courses • Search • Delete • Calculate GPA",
+            color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.85f),
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+
+    Divider(
+        color = MaterialTheme.colorScheme.tertiary, // orange
+        thickness = 3.dp
+    )
+}
+
 // GPA calculation functionality
 private fun calculateGPA2(courses: List<Course>): Double {
-
-    val gradePoints = mapOf("A" to 4.0, "A-" to 3.67, "B+" to 3.33, "B" to 3.0, "B-" to 2.67, "C+" to 2.33, "C" to 2.0, "C-" to 1.67, "D+" to 1.33, "D" to 1.0, "D-" to 0.67, "F" to 0.0)
+    val gradePoints = mapOf(
+        "A" to 4.0, "A-" to 3.67,
+        "B+" to 3.33, "B" to 3.0, "B-" to 2.67,
+        "C+" to 2.33, "C" to 2.0, "C-" to 1.67,
+        "D+" to 1.33, "D" to 1.0, "D-" to 0.67,
+        "F" to 0.0
+    )
     val totalCreditHours = courses.sumOf { it.creditHour }
     if (totalCreditHours == 0) return 0.0
+
     val totalPoints = courses.sumOf {
         it.creditHour * (gradePoints[it.letterGrade.uppercase()] ?: 0.0)
     }
-
-    return if (totalCreditHours > 0) totalPoints / totalCreditHours else 0.0
+    return totalPoints / totalCreditHours
 }
 
 @Composable
 fun TitleRow(head1: String, head2: String, head3: String, head4: String) {
-    Row(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.primary)
-            .fillMaxWidth()
-            .padding(5.dp)
-    ) {
-        Text(head1, color = Color.White,
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
             modifier = Modifier
-                .weight(0.1f))
-        Text(head2, color = Color.White,
-            modifier = Modifier
-                .weight(0.2f))
-        Text(head3, color = Color.White,
-            modifier = Modifier.weight(0.2f))
-        Text(head4, color = Color.White,
-            modifier = Modifier.weight(0.2f))
+                .background(MaterialTheme.colorScheme.secondary) // navy
+                .fillMaxWidth()
+                .padding(vertical = 8.dp, horizontal = 6.dp)
+        ) {
+            val headerColor = MaterialTheme.colorScheme.onSecondary
+            Text(head1, color = headerColor, modifier = Modifier.weight(0.12f), fontWeight = FontWeight.Bold)
+            Text(head2, color = headerColor, modifier = Modifier.weight(0.38f), fontWeight = FontWeight.Bold)
+            Text(head3, color = headerColor, modifier = Modifier.weight(0.20f), fontWeight = FontWeight.Bold)
+            Text(head4, color = headerColor, modifier = Modifier.weight(0.20f), fontWeight = FontWeight.Bold)
+        }
+
+        Divider(
+            color = MaterialTheme.colorScheme.tertiary, // orange underline
+            thickness = 2.dp
+        )
     }
 }
 
 @Composable
 fun CourseRow(id: Int, name: String, creditHour: Int, letterGrade: String) {
-    Row(
+    // A tiny bit of styling: card row + grade highlight
+    val grade = letterGrade.uppercase()
+    val gradeColor = when {
+        grade.startsWith("A") -> MaterialTheme.colorScheme.tertiary // orange pop for A-range
+        grade.startsWith("B") -> MaterialTheme.colorScheme.secondary
+        grade.startsWith("C") -> MaterialTheme.colorScheme.onSurface
+        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
+    }
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp)
+            .padding(vertical = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Text(id.toString(), modifier = Modifier
-            .weight(0.1f))
-        Text(name, modifier = Modifier.weight(0.2f))
-        Text(creditHour.toString(), modifier = Modifier.weight(0.2f))
-        Text(letterGrade, modifier = Modifier.weight(0.2f))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 10.dp)
+        ) {
+            Text(id.toString(), modifier = Modifier.weight(0.12f), color = MaterialTheme.colorScheme.onSurface)
+            Text(name, modifier = Modifier.weight(0.38f), color = MaterialTheme.colorScheme.onSurface)
+            Text(creditHour.toString(), modifier = Modifier.weight(0.20f), color = MaterialTheme.colorScheme.onSurface)
+            Text(
+                letterGrade,
+                modifier = Modifier.weight(0.20f),
+                color = gradeColor,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
@@ -313,21 +377,30 @@ fun CustomTextField(
 ) {
     OutlinedTextField(
         value = textState,
-        onValueChange = { onTextChange(it) },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType
-        ),
+        onValueChange = onTextChange,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         singleLine = true,
-        label = { Text(title)},
-        modifier = Modifier.padding(10.dp),
-        textStyle = TextStyle(fontWeight = FontWeight.Bold,
-            fontSize = 30.sp)
+        label = { Text(title) },
+        modifier = Modifier
+            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .fillMaxWidth(),
+        textStyle = TextStyle(
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        ),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.tertiary,   // orange focus
+            focusedLabelColor = MaterialTheme.colorScheme.secondary,   // navy label
+            cursorColor = MaterialTheme.colorScheme.secondary,         // navy cursor
+            unfocusedBorderColor = MaterialTheme.colorScheme.primary,  // light blue
+            unfocusedLabelColor = MaterialTheme.colorScheme.secondary  // navy
+        )
     )
 }
 
-class MainViewModelFactory(val application: Application) :
-    ViewModelProvider.Factory {
+class MainViewModelFactory(val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return MainViewModel(application) as T
     }
 }
