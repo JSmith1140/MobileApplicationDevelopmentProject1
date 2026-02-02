@@ -241,7 +241,7 @@ fun MainScreen(
 // GPA calculation functionality
 private fun calculateGPA2(courses: List<Course>): Double {
 
-    val gradePoints = mapOf("A" to 4.0, "B" to 3.0, "C" to 2.0, "D" to 1.0, "F" to 0.0)
+    val gradePoints = mapOf("A" to 4.0, "A-" to 3.67, "B+" to 3.33, "B" to 3.0, "B-" to 2.67, "C+" to 2.33, "C" to 2.0, "C-" to 1.67, "D+" to 1.33, "D" to 1.0, "D-" to 0.67, "F" to 0.0)
     val totalCreditHours = courses.sumOf { it.creditHour }
     if (totalCreditHours == 0) return 0.0
     val totalPoints = courses.sumOf {
