@@ -164,7 +164,7 @@ fun MainScreen(
                         searching = true
                         viewModel.findCourse(courseName)
                     },
-                    colors = lightBlueButtonColors
+                    colors = navyButtonColors
                 ) { Text("Sch") }
 
                 Button(
@@ -256,7 +256,7 @@ fun MainScreen(
 private fun HeaderSection() {
     // Logo image
     Image(
-        painter = painterResource(id = R.drawable.rwu_logo),
+        painter = painterResource(id = R.drawable.rwulogo),
         contentDescription = "Header Image",
         modifier = Modifier
             .fillMaxWidth()
