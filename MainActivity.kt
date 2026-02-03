@@ -32,6 +32,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.maxli.coursegpa.ui.theme.CourseTheme
+import androidx.compose.ui.graphics.Color
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -274,7 +276,6 @@ private fun HeaderSection() {
     ) {
         Text(
             text = "Course GPA Tracker",
-            modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSecondary,
             style = MaterialTheme.typography.titleLarge,
@@ -387,12 +388,13 @@ fun CustomTextField(
             fontSize = 22.sp
         ),
         colors = OutlinedTextFieldDefaults.colors(
-
             focusedBorderColor = MaterialTheme.colorScheme.tertiary,   // orange focus
             focusedLabelColor = MaterialTheme.colorScheme.secondary,   // navy label
             cursorColor = MaterialTheme.colorScheme.secondary,         // navy cursor
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary,  // light blue
-            unfocusedLabelColor = MaterialTheme.colorScheme.secondary  // navy
+            unfocusedBorderColor = Color.White,  // light blue
+            unfocusedLabelColor = MaterialTheme.colorScheme.secondary, // navy
+
+
         )
     )
 }
