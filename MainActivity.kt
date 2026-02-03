@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -273,14 +274,11 @@ private fun HeaderSection() {
     ) {
         Text(
             text = "Course GPA Tracker",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSecondary,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Add courses • Search • Delete • Calculate GPA",
-            color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.85f),
-            style = MaterialTheme.typography.bodyMedium
         )
     }
 
@@ -389,6 +387,7 @@ fun CustomTextField(
             fontSize = 22.sp
         ),
         colors = OutlinedTextFieldDefaults.colors(
+
             focusedBorderColor = MaterialTheme.colorScheme.tertiary,   // orange focus
             focusedLabelColor = MaterialTheme.colorScheme.secondary,   // navy label
             cursorColor = MaterialTheme.colorScheme.secondary,         // navy cursor
