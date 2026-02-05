@@ -276,6 +276,7 @@ private fun HeaderSection() {
     ) {
         Text(
             text = "Course GPA Tracker",
+            modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSecondary,
             style = MaterialTheme.typography.titleLarge,
